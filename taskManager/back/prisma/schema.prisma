@@ -1,0 +1,73 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id String @id @default(uuid())
+  name String 
+  email String @unique
+  password String @map("password")
+  createdIn DateTime @default(now())
+  updatedIn DateTime @updatedAt
+  role Role[USER]
+  projects Project[]
+  tasks task[]
+
+  @@map("users)
+}
+
+Enum Role{
+  ADMIN
+  MEMBER
+  COLLABORATOR 
+}
+
+model Project {
+  id String @id @default(uuid())
+  tittle String 
+  description String?
+  status Status @default(OPEN)
+  createdIn DateTime @default(now())
+  updatedIn DateTime @updatedAt
+
+ ownerID String
+ owner User @relation(fields:[ownerID], references [id])
+ tasks TAsk[]
+
+ @map("projects")
+}
+
+Enum Status{
+  OPEN,
+  IN PROGRESS,
+  COMPLETED,
+  CANCELED
+
+}
+
+
+model Task{
+  id String @id @default(uuid())
+  tittle String 
+  description String?
+  LimitDate DateTime?
+  fineshed Boolean @default(false)
+  createdIn DateTime @default(now())
+  updatedIn DateTime @updatedAt
+ 
+ projectId String 
+ projetc Projetc @relation(fields:[projectId], references [id]) 
+
+ responsibleId String?
+ responsible User? @relation(fields[responsibleId],references : [id]) 
+
+ @@map("tasks")
+}
